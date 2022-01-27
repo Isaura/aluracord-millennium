@@ -15,7 +15,6 @@ export default function PageNotFound() {
                     justifyContent: "center",
                     backgroundColor: appConfig.theme.colors.neutrals["000"],
                     backgroundImage:
-                        //     <img src={errorImage.src}></img>,
                         "url(https://c4.wallpaperflare.com/wallpaper/514/950/389/space-fire-star-wars-galactic-empire-wallpaper-preview.jpg)",
                     backgroundRepeat: "no-repeat",
                     backgroundSize: "cover",
