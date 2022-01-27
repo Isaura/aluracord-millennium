@@ -23,6 +23,19 @@ function Titulo(props) {
 export default function PaginaInicial() {
     const [username, setUsername] = React.useState('isaura');
     const router = useRouter();
+    const [location, setLocation] = React.useState('ES - Brasil');
+
+    function handleChangeUsername(event) {
+        setUsername(event.target.value);
+
+        if (event.target.value.length > 2) {
+            fetch(`https://api.github.com/users/${event.target.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    setLocation(data.location || '');
+                });
+        }
+    }
 
     return (
         <>
@@ -70,11 +83,8 @@ export default function PaginaInicial() {
 
                         <TextField
                             value={username}
-                            onChange={function (event) {
-                                console.log('usuário digitou', event.target.value);
-                                const value = event.target.value;
-                                setUsername(value);
-                            }}
+                            placeholder='Informe o seu usuário do GitHub'
+                            onChange={handleChangeUsername}
                             fullWidth
                             textFieldColors={{
                                 neutral: {
@@ -123,6 +133,8 @@ export default function PaginaInicial() {
                                 marginBottom: '16px',
                             }}
                             src={`https://github.com/${username}.png`}
+                            src={username.length > 2 ? `https://github.com/${username}.png` : undefined}
+                            alt={username.length > 2 ? `Imagem do usuário ${username}` : ''}
                         />
                         <Text
                             variant="body4"
@@ -134,6 +146,8 @@ export default function PaginaInicial() {
                             }}
                         >
                             {username}
+                            {username.length <= 2 ? '' : location ? ` - ${location}` : ''}
+
                         </Text>
                     </Box>
                     {/* Photo Area */}
