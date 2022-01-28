@@ -1,21 +1,45 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzM3NDAwNywiZXhwIjoxOTU4OTUwMDA3fQ.LyH8x-0dtDcD8BzNn3pLhsKcvs6WJVWV25ybIjqExCs';
+const SUPABASE_URL = 'https://scbajkukgstarxaiwafm.supabase.co';
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ChatPage() {
     const [mensagem, setMensagem] = React.useState('');
     const [listaMensagens, setListaMensagens] = React.useState([]);
 
+    React.useEffect(() => {
+        supabaseClient
+            .from('mensagens')
+            .select('*')
+            .order('id', { ascending: false })
+            .then(({ data }) => {
+                console.log('Dados da consulta:', data);
+                setListaMensagens(data);
+            });
+    }, []);
+
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
-            id: listaMensagens.length + 1,
             de: 'isaura',
             texto: novaMensagem,
         }
-        setListaMensagens([
-            mensagem,
-            ...listaMensagens,
-        ]);
+
+        supabaseClient
+            .from('mensagens')
+            .insert([
+                mensagem
+            ])
+            .then(({ data }) => {
+                setListaMensagens([
+                    data[0],
+                    ...listaMensagens,
+                ]);
+            });
+
         setMensagem('');
     }
 
@@ -57,13 +81,13 @@ export default function ChatPage() {
                     }}
                 >
 
-                    <MessageList mensagens={listaMensagens}
-                        mensagens={listaMensagens}
+                    <MessageList mensagens={listaMensagens} />
+                    {/* mensagens={listaMensagens}
                         onDelete={(id) => {
                             setListaMensagens(listaMensagens.filter((element) => {
                                 return element.id !== id
                             }))
-                        }} />
+                        }} /> */}
 
                     <Box
                         as="form"
@@ -143,7 +167,6 @@ function Header() {
 }
 
 function MessageList(props) {
-    console.log(props);
     return (
         <Box
             tag="ul"
@@ -174,8 +197,6 @@ function MessageList(props) {
                             styleSheet={{
                                 marginBottom: '4px',
                                 display: 'flex',
-                                // alignItems: 'flex',
-                                // justifyContent: 'space-between',
                             }}
                         >
                             <Image
@@ -186,7 +207,7 @@ function MessageList(props) {
                                     display: 'inline-block',
                                     marginRight: '8px',
                                 }}
-                                src={`https://github.com/isaura.png`}
+                                src={`https://github.com/${mensagem.de}.png`}
                             />
                             <Text tag="strong">
                                 {mensagem.de}

@@ -22,8 +22,9 @@ function Titulo(props) {
 
 export default function PaginaInicial() {
     const [username, setUsername] = React.useState('isaura');
-    const router = useRouter();
     const [location, setLocation] = React.useState('ES - Brasil');
+    const router = useRouter();
+
 
     function handleChangeUsername(event) {
         setUsername(event.target.value);
